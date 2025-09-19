@@ -62,6 +62,18 @@ export default function KyuuseiCalculator() {
   const [birthDate, setBirthDate] = useState("");
   const [result, setResult] = useState(null);
 
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 121 }, (_, idx) => currentYear - idx);
+
+  const handleYearChange = (year) => {
+    if (!year) {
+      setBirthDate("");
+      return;
+    }
+    const monthDay = birthDate ? birthDate.slice(5) : "01-01";
+    setBirthDate(`${year}-${monthDay}`);
+  };
+
   const handleClick = () => {
     if (!birthDate) return;
     const d = new Date(birthDate);
@@ -74,19 +86,35 @@ export default function KyuuseiCalculator() {
   return (
     <div className="p-4 rounded-2xl border border-gray-200 bg-white text-gray-900 w-full max-w-md">
       <div className="text-lg font-semibold mb-3">九星気学 本命星 計算ツール（2025年の運勢付き）</div>
-      <div className="flex items-center gap-2 mb-4">
-        <input
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          className="border rounded-lg px-2 py-1"
-        />
-        <button
-          onClick={handleClick}
-          className="px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
-        >
-          占う
-        </button>
+      <div className="mb-4">
+        <div className="text-sm font-medium text-gray-700 mb-1">生年月日</div>
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={birthDate ? birthDate.slice(0, 4) : ""}
+            onChange={(e) => handleYearChange(e.target.value)}
+            className="border rounded-lg px-2 py-1 min-w-[90px]"
+          >
+            <option value="">年を選択</option>
+            {yearOptions.map((year) => (
+              <option key={year} value={year}>
+                {year}年
+              </option>
+            ))}
+          </select>
+          <input
+            type="date"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            className="border rounded-lg px-2 py-1 flex-1 min-w-[150px]"
+          />
+          <button
+            onClick={handleClick}
+            className="px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+          >
+            占う
+          </button>
+        </div>
+        <div className="text-xs text-gray-500 mt-1">年を選択してから月日を調整すると、生年月日を素早く指定できます。</div>
       </div>
       {result && (
         <div className="mt-3 text-sm space-y-2">
